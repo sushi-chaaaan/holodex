@@ -1,6 +1,12 @@
+import os
 from aiohttp import ClientSession
 from typing import Any, Literal, Optional
 from types import TracebackType
+
+api_key = os.environ['HOLODEX_KEY']
+headers = {
+    'X-APIKEY': f'{api_key}'
+}
 
 
 class HolodexHttpClient:
@@ -36,21 +42,21 @@ class HolodexHttpClient:
             return await r.json()
 
     async def get_channel(self, channel_id: str) -> Any:
-        return await self.request("GET", f"/channels/{channel_id}")
+        return await self.request("GET", f"/channels/{channel_id}", headers=headers)
 
     async def get_channels(self, **params: Any) -> Any:
         return await self.request(
-            "GET", f"/channels", params={"limit": 100, "offset": 100, **params}
+            "GET", f"/channels", params={"limit": 100, "offset": 100, **params}, headers=headers
         )
 
     async def get_autocomplete(self, q: str) -> Any:
-        return await self.request("GET", f"/search/autocomplete", params={"q": q})
+        return await self.request("GET", f"/search/autocomplete", params={"q": q}, headers=headers)
 
     async def get_live_streams(self, params: dict[str, Any]) -> Any:
-        return await self.request("GET", f"/live", params=params)
+        return await self.request("GET", f"/live", params=params, headers=headers)
 
     async def get_video(self, video_id: str, params: dict[str, Any]) -> Any:
-        return await self.request("GET", f"/videos/{video_id}", params=params)
+        return await self.request("GET", f"/videos/{video_id}", params=params, headers=headers)
 
     async def get_videos_from_channel(
         self,
@@ -59,8 +65,8 @@ class HolodexHttpClient:
         params: dict[str, Any],
     ) -> Any:
         return await self.request(
-            "GET", f"/channels/{channel_id}/{type}", params=params
+            "GET", f"/channels/{channel_id}/{type}", params=params, headers=headers
         )
 
     async def get_search_video(self, params: dict[str, Any]) -> Any:
-        return await self.request("POST", "/search/videoSearch", params=params)
+        return await self.request("POST", "/search/videoSearch", params=params, headers=headers)
